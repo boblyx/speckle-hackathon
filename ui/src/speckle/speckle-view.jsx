@@ -1,11 +1,12 @@
 import { createSignal, onMount } from "solid-js";
 import { Viewer, DefaultViewerParams, SpeckleLoader } from "@speckle/viewer";
-import { CameraController, MeasurementsExtension, SelectionExtension } from "@speckle/viewer";
+import { CameraController, MeasurementsExtension, SelectionExtension, ViewerEvent, FilteringExtension  } from "@speckle/viewer";
 import { SPECKLE_URL, TOKEN, speckleFetch } from "./SpeckleUtils";
 import { modelName, streamId } from "../App";
 import { commitQuery, streamQuery } from "./SpeckleQueries";
 
 export const [speckleViewer, setSpeckleViewer] = createSignal(null);
+export const [filter, setFilter] = createSignal(null);
 
 export async function loadSpeckleURL(url, token){
   console.log("Loading model from: ", url)
@@ -94,12 +95,15 @@ async function initViewer() {
 
   /** Add the stock camera controller extension */
   speckleViewer().createExtension(CameraController);
+  setFilter(speckleViewer().createExtension(FilteringExtension));
 
   /** Add the measurement tool */
   // viewer.createExtension(MeasurementsExtension);
 
   speckleViewer().createExtension(SelectionExtension);
-
+  speckleViewer().on(ViewerEvent.ObjectClicked, (e) => {
+    console.log(e.hits[0].node.model.raw);
+  })
 }
 
 function SpeckleViewer() {
