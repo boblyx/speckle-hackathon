@@ -81,7 +81,7 @@ const DatabaseViewer = () => {
                 <For each={FAMILYPROPERTIES}>
                     {(prop) => (
                         <div id={`database-view-${prop}`} class='flex flex-col divide-y-2 w-max'>
-                            <div class='px-3 py-2 font-medium min-h-10 max-h-10 min-w-max' id={`database-view-${prop}-header`}>{prop}</div>
+                            <div class='px-3 py-2 font-medium min-h-10 max-h-10 min-w-max border-b-2 border-gray-300' id={`database-view-${prop}-header`}>{prop}</div>
                         </div>
                     )}
                 </For>
