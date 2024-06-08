@@ -10,13 +10,13 @@ namespace familyman
             Invalid = -1,
             Loaded,
             getFamilies_Sort_Category,
-            getFamilies_Of_Category
+            getFamilies_Of_Category,
+            getParameters_Of_Uuid
         }
 
         private RevitActionsEnum _currentRevitActions;
         private readonly ExternalEvent _externalEvent;
         public FamWindow famWindow;
-        //public 
 
         public RevitEventHandler()
         {
@@ -33,6 +33,15 @@ namespace familyman
                     famWindow.SendPayload("load-families", family_json);
                     break;
                 case RevitActionsEnum.getFamilies_Of_Category:
+                    break;
+                case RevitActionsEnum.getParameters_Of_Uuid:
+                    try {
+                        string parameters_json = Actions.Finder.getParameters_Of_Uuid(app, famWindow.uuid_to_find);
+                        famWindow.SendPayload("load-parameters", parameters_json);
+                    }
+                    catch {
+                        // TODO: Send error toast
+                    }
                     break;
                 default:
                     Debug.WriteLine("RevitEventHandler action not defined");

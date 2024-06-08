@@ -28,4 +28,15 @@ export function getFamilies_Of_Category(cat = "Doors"){
   // Check with the main model and find a match
 }
 
+/**
+ * Gets Revit element parameters that are editable.
+ * @author Bob Lee
+ */
+export function getParameters_Of_Uuid(uuid){
+  sendWebView2Msg({"action": "getParameters_Of_Uuid", 
+                  "payload":{
+                    "uuid": uuid
+                  }});
+}
+
 

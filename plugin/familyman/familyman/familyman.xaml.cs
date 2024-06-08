@@ -21,6 +21,7 @@ namespace familyman
         public UIApplication uiApp;
         public bool isLoaded = false;
         public WebView2 webViewObj;
+        public string uuid_to_find = "";
 
         public FamWindow(UIApplication app)
         {
@@ -59,6 +60,15 @@ namespace familyman
                 case "getFamilies_Sort_Category":
                     Debug.WriteLine("Getting all families by category!");
                     App.rvtHandler.Raise(RevitEventHandler.RevitActionsEnum.getFamilies_Sort_Category);
+                    break;
+
+                case "getParameters_Of_Uuid":
+                    Debug.WriteLine("Getting families by uuid!");
+                    Debug.WriteLine(result.payload);
+                    Newtonsoft.Json.Linq.JObject uuid_data = result.payload as Newtonsoft.Json.Linq.JObject;
+                    Newtonsoft.Json.Linq.JToken uuid = uuid_data["uuid"];
+                    uuid_to_find = uuid.ToObject<string>();
+                    App.rvtHandler.Raise(RevitEventHandler.RevitActionsEnum.getParameters_Of_Uuid);
                     break;
 
                 case "loaded":

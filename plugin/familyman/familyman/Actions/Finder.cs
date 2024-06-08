@@ -52,5 +52,14 @@ namespace familyman.Actions
             string json_str = JsonSerializer.Serialize(familySymbolsDict);
             return json_str;
         }
+
+        public static string getParameters_Of_Uuid(UIApplication app, string uuid)
+        {
+            Document doc = app.ActiveUIDocument.Document;
+            Element obj = doc.GetElement(uuid);
+            IList<Parameter> parameters = obj.GetOrderedParameters();
+            string json_str = JsonSerializer.Serialize(parameters);
+            return json_str;
+        }
     }
 }

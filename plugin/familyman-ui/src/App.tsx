@@ -6,11 +6,15 @@ import { onMount, createSignal, For, Show } from 'solid-js';
 import type { Component } from 'solid-js';
 import {createStore} from 'solid-js/store';
 import Header from './components/Header';
-import FamilyCategoryList from './components/FamilyList';
+import Finder from './pages/Finder';
 import {getFamilies_Sort_Category} from './API/Revit';
 
 export const [currentPage, setCurrentPage] = createSignal("finder");
 export const [familyStore, setFamilyStore] = createStore<any>({});
+export const [parameterStore, setParameterStore] = createStore<any>();
+export const [currentFamily, setCurrentFamily] = createSignal<any>();
+
+// FOR TESTING ONLY
 const egInData = {
     "Doors": {
       "abc":{
@@ -29,6 +33,8 @@ const egInData = {
       }
     }
 }
+
+const egParamData = {}
 
 const App: Component = () =>  {
 
@@ -59,24 +65,7 @@ const App: Component = () =>  {
   return (
     <>
       <Header/>
-      <div class = "m-4">
-        <p> List candidate cards here.</p>
-        <For each = {Object.keys(familyStore)}>
-          {
-            (key, i) => {
-              console.log(key);
-              return (
-                <>
-                  <Show when = {Object.keys(familyStore[key]).length > 0}>
-                    <FamilyCategoryList category={key} 
-                      families = {Object.values(familyStore[key])}/>
-                  </Show>
-                </>
-              )
-            }
-          }
-        </For>
-      </div>
+      <Finder/>
     </>
   )
 };

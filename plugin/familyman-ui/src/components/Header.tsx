@@ -5,7 +5,7 @@
 import type { Component } from 'solid-js';
 import { Match, Switch } from 'solid-js';
 import * as bootstrap from 'bootstrap';
-import {currentPage} from '../App';
+import {currentPage, setCurrentPage} from '../App';
 
 const Header : Component = () => {
   return (
@@ -31,7 +31,13 @@ const Header : Component = () => {
               </div>
             </Match>
             <Match when = {currentPage() == "changer"}>
-              <button class = "btn" id="back-btn">Back</button>
+
+              <div class = "ms-4 mb-2 col-auto">
+                <button class = "btn btn-primary border-primary-subtle \
+                  bg-gradient border fs-2" id="back-btn"
+                  onclick={()=>{setCurrentPage("finder")}}
+                >🡠</button>
+              </div>
             </Match>
           </Switch>
           <div class = "d-flex col text-light text-right position-relative me-4">
