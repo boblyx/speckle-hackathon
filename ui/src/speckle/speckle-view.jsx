@@ -1,11 +1,21 @@
 import { createSignal, onMount } from "solid-js";
 import { Viewer, DefaultViewerParams, SpeckleLoader } from "@speckle/viewer";
 import { CameraController, MeasurementsExtension, SelectionExtension } from "@speckle/viewer";
-import { SPECKLE_URL, TOKEN } from "./SpeckleUtils";
+import { SPECKLE_URL, TOKEN, speckleFetch } from "./SpeckleUtils";
 import { modelName, streamId } from "../App";
+import { commitQuery, streamQuery } from "./SpeckleQueries";
 
-export const [speckleLoader, setSpeckleLoader] = createSignal(null);
 export const [speckleViewer, setSpeckleViewer] = createSignal(null);
+
+export async function loadSpeckleURL(url, token){
+  console.log("Loading model from: ", url)
+  const loader = new SpeckleLoader(
+    speckleViewer().getWorldTree(),
+    url,
+    token
+  );
+  await speckleViewer().loadObject(loader, 1, true);
+}
 
 // Loads model from stream id and commit id if user is logged in. Creates loader if no loader exists, or uses existing loader to load model.
 export async function loadModel(){
@@ -15,24 +25,55 @@ export async function loadModel(){
     return
   }
 
-  var models = await speckleFetch(streamQuery(streamId()), token);
-  console.log(models)
-
+  var modelFullName, allModels;
   // url = `${SPECKLE_URL}/projects/${streamId()}`
   let token = localStorage.getItem(TOKEN)
   if (token){
-    var models = await speckleFetch(streamQuery(streamId()), token);
-    console.log(models)
+    switch (modelName()){
+      case "Main":
+        var streamRes = await speckleFetch(streamQuery(streamId()), token);
+        allModels = streamRes.data.stream.branches.items;
+        const targetPattern = /^main\/[^/]+$/;
+        for (const item of allModels) {
+          if (targetPattern.test(item.name)) {
+            const commitsRes = await speckleFetch(commitQuery(streamId(), item.name), token);
+            const allCommits = commitsRes.data.stream.branch.commits.items;
+            const lastCommitRefObjId = allCommits[allCommits.length - 1]['referencedObject'];
+            const model_url = `${SPECKLE_URL}/streams/${streamId()}/objects/${lastCommitRefObjId}`;
+            await loadSpeckleURL(model_url, token);
+          }
+        }
+        break;
 
-    // // LOAD SPECKLE MODEL
-    // const loader = new SpeckleLoader(
-    //   speckleViewer().getWorldTree(),
-    //   url,
-    //   token
-    // );
-  
-    // setSpeckleLoader(loader);
-    // await speckleViewer().loadObject(speckleLoader(), 1, true);
+      case null:
+        console.error("There is no model chosen. Please select a model before loading.")
+        return
+
+      default:
+        // Get model id from chosen name
+        var streamRes = await speckleFetch(streamQuery(streamId()), token);
+        allModels = streamRes.data.stream.branches.items;
+        for (const item of allModels) {
+          if (item.name === `main/${modelName()}`) {
+            modelFullName = item.name;
+          }
+        }
+
+        // Handle error if no matching model found.
+        if (!modelFullName){
+          console.error("There is no matching model.")
+          return
+        }
+
+        const commitsRes = await speckleFetch(commitQuery(streamId(), modelFullName), token);
+        const allCommits = commitsRes.data.stream.branch.commits.items;
+        const lastCommitRefObjId = allCommits[allCommits.length - 1]['referencedObject'];
+        const model_url = `${SPECKLE_URL}/streams/${streamId()}/objects/${lastCommitRefObjId}`;
+        await loadSpeckleURL(model_url, token);
+        break;
+    }
+    
+
   }
 
   else {
@@ -68,7 +109,7 @@ function SpeckleViewer() {
   })
 
   return (
-    <div className="z-0 w-1/3 h-full" id='speckle-viewer'></div>
+    <div className="z-0 w-2/5 h-full" id='speckle-viewer'></div>
   );
 }
 

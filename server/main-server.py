@@ -4,7 +4,7 @@ from pydantic import BaseModel
 import requests
 import os
 from dotenv import load_dotenv, dotenv_values
-from utils.excel_utils import check_type_mark, update_excel, FamilyDatabaseParams
+from utils.excel_utils import check_type_mark, update_excel, FamilyDatabaseParams, extractDatabase
 import subprocess
 from pprint import pprint;
 import re;
@@ -193,7 +193,17 @@ def update_database(request: UpdateRequest):
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-    return response_data
+
+@app.post("/retrieve_database")
+def retrieve_database():
+    response_data = {"Response":"Something went wrong with retrieving database."}
+    try:
+        data_dict = extractDatabase(filepath=APP_EXCEL_DATABASE_WSL)
+        if data_dict:
+            return data_dict
+    
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn

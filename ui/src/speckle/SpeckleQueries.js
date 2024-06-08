@@ -44,6 +44,8 @@ export const commitQuery = (streamId, branchName) => `query {
       commits {
         items{
           id
+          message
+          referencedObject
         }
       }
     }

@@ -18,7 +18,7 @@ code {
 
 .dropdown {
   z-index: 60;
-  @apply absolute items-center max-h-60 text-center justify-between w-full p-2 text-xl font-medium text-gray-600 dark:text-gray-400
+  @apply absolute items-center max-h-60 text-center justify-between min-w-full w-auto p-2 font-medium text-gray-600 dark:text-gray-400
 }
 
 .basic-text {
@@ -31,4 +31,28 @@ code {
 
 .list-item {
   @apply w-full text-gray-500 block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white
+}
+
+.table {
+  @apply divide-y-2
+}
+
+.data-cell {
+  @apply w-full font-medium px-2 py-1 min-h-10 max-h-10 text-ellipsis whitespace-nowrap cursor-pointer
+}
+
+.data-cell.selected {
+  @apply bg-blue-400
+}
+
+.data-row {
+  @apply p-3 w-full
+}
+
+.icon-s {
+  @apply max-h-5 max-w-5
+}
+
+.filter-category-container {
+  @apply px-3 py-2 font-medium min-h-10 max-h-10 min-w-max gap-x-2 flex flex-row items-center relative rounded-lg border-2 border-gray-400 my-2
 }

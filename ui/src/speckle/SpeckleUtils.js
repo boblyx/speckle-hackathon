@@ -1,5 +1,4 @@
 import { userInfoQuery } from "./SpeckleQueries.js"
-import { setSpeckleLoader } from "./speckle-view.jsx";
 
 export const SPECKLE_URL = import.meta.env.VITE_SPECKLE_URL;
 export const APP_SPECKLE_ID = import.meta.env.VITE_SPECKLE_ID;
@@ -14,15 +13,14 @@ export const FS_URL = import.meta.env.VITE_API_URL;
  */
 export function speckleLogOut() {
     // Remove both token and refreshToken from localStorage
-    localStorage.removeItem(TOKEN)
-    localStorage.removeItem(REFRESH_TOKEN)
-    localStorage.removeItem(`${APP_SPECKLE_NAME}.Authentication`)
-    setSpeckleLoader(null)
+    localStorage.removeItem(TOKEN);
+    localStorage.removeItem(REFRESH_TOKEN);
+    localStorage.removeItem(`${APP_SPECKLE_NAME}.Authentication`);
 }
 
 export function checkSpeckleAuthStatus(){
-    const authState = JSON.parse(localStorage.getItem(`${APP_SPECKLE_NAME}.Authentication`))
-    return authState
+    const authState = JSON.parse(localStorage.getItem(`${APP_SPECKLE_NAME}.Authentication`));
+    return authState;
 }
 
 /**
@@ -40,8 +38,8 @@ export function goToSpeckleAuthPage() {
     // Save challenge in localStorage
     localStorage.setItem(CHALLENGE, challenge)
     // Send user to auth page
-    console.log(`Going to auth page : ${SPECKLE_URL}/authn/verify/${APP_SPECKLE_ID}/${challenge}`)
-    window.location.href = `${SPECKLE_URL}/authn/verify/${APP_SPECKLE_ID}/${challenge}`
+    console.log(`Going to auth page : ${SPECKLE_URL}/authn/verify/${APP_SPECKLE_ID}/${challenge}`);
+    window.location.href = `${SPECKLE_URL}/authn/verify/${APP_SPECKLE_ID}/${challenge}`;
 }
 
 /**
@@ -60,19 +58,19 @@ export async function exchangeAccessCode(accessCode) {
               challenge: localStorage.getItem(CHALLENGE)
             })
           })
-          var data = await res.json()
+          var data = await res.json();
           if (data.token) {
             // If retrieving the token was successful, remove challenge and set the new token and refresh token
-            localStorage.removeItem(CHALLENGE)
-            localStorage.setItem(TOKEN, data.token)
-            localStorage.setItem(REFRESH_TOKEN, data.refreshToken)
+            localStorage.removeItem(CHALLENGE);
+            localStorage.setItem(TOKEN, data.token);
+            localStorage.setItem(REFRESH_TOKEN, data.refreshToken);
           }
-          return data
+          return data;
     }
 
     catch (err){
-        console.warn("Failed to exchange access code.")
-        return {}
+        console.warn("Failed to exchange access code.");
+        return {};
     }
 
 }
@@ -96,9 +94,9 @@ export async function speckleFetch(query, token) {
             token: token
         })
         })
-    return await res.json()
+    return await res.json();
     } catch (err) {
-    console.error("API call failed", err)
+    console.error("API call failed", err);
     }
 }
 
@@ -106,32 +104,32 @@ export async function speckleFetch(query, token) {
  * Tries to get user data with auth token from local storage
  */
 export async function getUserData(){
-    console.log("Fetching user data...")
-    let token = localStorage.getItem(TOKEN)
-    console.log("Token: ",token)
+    console.log("Fetching user data...");
+    let token = localStorage.getItem(TOKEN);
+    console.log("Token: ",token);
 
     try {
         // If token found
         if (token){
-            let userData = await speckleFetch(userInfoQuery(), token)
-            console.log("Speckle User Data: ", userData)
-            localStorage.setItem(`${APP_SPECKLE_NAME}.User`, userData.data.activeUser.name)
-            localStorage.setItem(`${APP_SPECKLE_NAME}.Details`, JSON.stringify(userData.data.serverInfo))
-            localStorage.setItem(`${APP_SPECKLE_NAME}.Authentication`, JSON.stringify(true))
+            let userData = await speckleFetch(userInfoQuery(), token);
+            console.log("Speckle User Data: ", userData);
+            localStorage.setItem(`${APP_SPECKLE_NAME}.User`, userData.data.activeUser.name);
+            localStorage.setItem(`${APP_SPECKLE_NAME}.Details`, JSON.stringify(userData.data.serverInfo));
+            localStorage.setItem(`${APP_SPECKLE_NAME}.Authentication`, JSON.stringify(true));
             return userData
         }
     
         // If no token found
         else {
-            console.log("Not authenticated. Please log in")
-            return {}
+            console.log("Not authenticated. Please log in");
+            return {};
             // LoginSpeckle()
         }
     }
 
     catch (e){
-        console.warn(e)
-        return Promise.reject("Something went wrong with getting user data.")
+        console.warn(e);
+        return Promise.reject("Something went wrong with getting user data.");
     }
 
 }
@@ -140,23 +138,15 @@ export async function getUserData(){
  * Get any streams and branches that user account has. If login_state is false, direct users to log in to Speckle.
  */
 export async function GetSpeckleStream(){
-    console.log("Getting Speckle Stream...")
+    console.log("Getting Speckle Stream...");
     
     // Check for authentication
-    var authState = localStorage.getItem("Authentication")
+    var authState = localStorage.getItem("Authentication");
     if (authState){
         
     }
 
     else {
-        console.log("Not authenticated. Please log in")
+        console.log("Not authenticated. Please log in");
     }
-}
-
-/**
- * Displays speckle login bubble if no auth token is found
- */
-export  function LoginSpeckle() {
-    const loginBubble = document.getElementById('speckle_login_bubble')
-    loginBubble.setAttribute('class', 'speckle_login')
 }

@@ -86,3 +86,22 @@ def update_excel(filepath, new_data: FamilyDatabaseParams):
 
     except Exception as e:
         print(f"An error occurred: {e}")
+
+
+def extractDatabase(filepath):
+    """
+    Extracts the entire database as a JSON
+
+    :param filepath: The path to the Excel file.
+    """
+    try:
+        # Read the Excel file
+        df = pd.read_excel(filepath, engine='openpyxl')
+        
+        # Convert the DataFrame to JSON
+        data_dict = df.to_dict(orient='index')
+        
+        return data_dict
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None

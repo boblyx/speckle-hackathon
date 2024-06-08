@@ -3,14 +3,22 @@ import styles from './App.module.css';
 import { createSignal, onMount } from "solid-js";
 import { FS_URL, TOKEN, getUserData, goToSpeckleAuthPage, speckleFetch, speckleLogOut } from './speckle/SpeckleUtils';
 import { useNavigationGuard } from './speckle/NavigationGuard';
-import SpeckleViewer from './speckle/speckle-view';
+import SpeckleViewer, { loadModel, speckleViewer } from './speckle/speckle-view';
 import { queryAllStreams, streamQuery } from './speckle/SpeckleQueries';
+import DataViewer, { dataView, selectedTypeMark } from './components/DataViewer';
 
 export const [userData, setUserData] = createSignal(null);
 export const [winlocation, setWinLocation] = createSignal(window.location.pathname)
 export const [streamId, setStreamId] = createSignal(null);
 export const [modelName, setModelName] = createSignal(null);
 export const [selectedCategory, setSelectedCategory] = createSignal(null);
+
+export const BIM_CATEGORIES = [
+  'Door',
+  'Wall',
+  'Opaque Wall',
+  'Column',
+]
 
 async function selectStream(e){
   const streamInput_ = document.getElementById('speckle-stream-input');
@@ -87,16 +95,16 @@ async function selectStream(e){
 
 // Function to extract unique link model names from the models/branch list
 function extractUniqueLinks(data) {
-  const linkPattern = /main\/(link\d+)/;
-  const links = data
+  const tierPattern = /main\/([^/]+)/;
+  const tiers = data
     .map(branch => {
-      const match = branch.name.match(linkPattern);
+      const match = branch.name.match(tierPattern);
       return match ? match[1] : null;
     })
-    .filter(link => link !== null);
-
-  // Return unique links
-  return [...new Set(links)];
+    .filter(tier => tier !== null);
+  
+  // Return unique tiers
+  return [...new Set(tiers)];
 }
 
 // Open dropdown which lists all the branches/models in the selected stream.
@@ -135,7 +143,7 @@ async function selectModel(e){
       label_.id = `speckle-model-main`
       label_.setAttribute('model-name', 'Main')
       label_.innerText = 'Main'
-      label_.setAttribute('class', 'list-item')
+      label_.setAttribute('class', 'list-item text-left')
       list_.appendChild(label_)
       unorderedList.appendChild(list_)
   
@@ -150,7 +158,7 @@ async function selectModel(e){
         label_.id = `speckle-model-${link}`
         label_.setAttribute('model-name', link)
         label_.innerText = link
-        label_.setAttribute('class', 'list-item')
+        label_.setAttribute('class', 'list-item text-left')
         list_.appendChild(label_)
         unorderedList.appendChild(list_)
       }
@@ -162,7 +170,7 @@ async function selectModel(e){
           label_.addEventListener('click', async () => {
               inputDiv.value = label_.getAttribute('model-name');
               button_.innerHTML = inputDiv.value;
-              await setModelName(label_.getAttribute(inputDiv.value));
+              await setModelName(inputDiv.value);
               dropdownDiv.classList.add('hidden');
           })
       }
@@ -205,6 +213,69 @@ async function refreshLog(e){
 
 }
 
+async function updateRendering(){
+
+  // Get parameters to cut down search space
+  // var params = {
+  //   category : "",
+  //   family: "",
+  // }
+  // const relevantDOMElems = document.querySelectorAll(`[data-view="${dataView()}"][data-type='cell'][data-typemark="${selectedTypeMark()}"]`)
+  // relevantDOMElems.forEach(child => {
+
+  // })
+
+  const selNodes = []
+  const unselNodes = []
+
+  const worldTree = speckleViewer().getWorldTree();
+  const renderTree = worldTree.getRenderTree();
+
+  var _ = worldTree.walk((node) => {
+    const rawModelData = node['model']['raw'];
+    const category = rawModelData['category'];
+    if (category=='Doors'){
+      if ('definition' in rawModelData){
+        const familyName = rawModelData['definition']['family']
+        if (familyName == "MLD_DOR_Timber_Single_SS"){
+          selNodes.push(node);
+        }
+      }
+    }
+    else {
+      unselNodes.push(node);
+    }
+    return true;
+  })
+
+  // var test = renderTree.getInstances()
+  // console.log(test)
+
+  selNodes.forEach(node => {
+    const rvs = renderTree.getRenderViewsForNode(node);
+    // const materialData = {
+    //   color: 0xee0022,
+    //   opacity: 1,
+    //   roughness: 1,
+    //   metalness: 0,
+    //   vertexColors: false,
+    // };
+    // speckleViewer().setMaterial(rvs, materialData);
+  })
+
+  unselNodes.forEach(node => {
+    const rvs = renderTree.getRenderViewsForNode(node);
+    const materialData = {
+      color: 0xee0022,
+      opacity: 0.3,
+      roughness: 1,
+      metalness: 0,
+      vertexColors: false,
+    };
+    speckleViewer().setMaterial(rvs, materialData);
+  })
+}
+
 function App() {
   
   onMount(async () => {
@@ -213,7 +284,10 @@ function App() {
     setUserData(data);
     
     // DEBUGGING
-    setStreamId("c2ffa28355");
+    await setStreamId("58ae34f884");
+    await setModelName("0220_apartment tier 1");
+    await loadModel();
+    await updateRendering();
   })
 
   return (
@@ -259,7 +333,7 @@ function App() {
 
             </div>
 
-            <button id='navbar-speckle-refresh-log' className='basic-text' onClick={refreshLog}>Load Model</button>
+            <button id='navbar-speckle-refresh-log' className='basic-text' onClick={loadModel}>Load Model</button>
             <button id='navbar-speckle-refresh-log' className='basic-text' onClick={refreshLog}>Refresh Log</button>
           </div>
           }
@@ -269,6 +343,7 @@ function App() {
       {/* DISPLAY LOG START */}
       <div id="logs-viewer-container" class='flex flex-row h-full w-full'>
           <SpeckleViewer/>
+          <DataViewer/>
       </div>
       {/* DISPLAY LOG END */}
 
