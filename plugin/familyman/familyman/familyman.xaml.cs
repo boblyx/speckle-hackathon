@@ -68,6 +68,7 @@ namespace familyman
                     Newtonsoft.Json.Linq.JObject uuid_data = result.payload as Newtonsoft.Json.Linq.JObject;
                     Newtonsoft.Json.Linq.JToken uuid = uuid_data["uuid"];
                     uuid_to_find = uuid.ToObject<string>();
+                    Debug.WriteLine(uuid_to_find);
                     App.rvtHandler.Raise(RevitEventHandler.RevitActionsEnum.getParameters_Of_Uuid);
                     break;
 
