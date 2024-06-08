@@ -1,4 +1,4 @@
-﻿<Window x:Class="FamilyMan.SendWindow"
+﻿<Window x:Class="FamilyMan.FamWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -28,9 +28,9 @@
                     Background="#FFD2D2D2">
         </Border>
         <DockPanel Grid.Row="1">
-            <wv2:WebView2 x:Name="webView"
-                              CreationProperties="{StaticResource EvergreenWebView2CreationProperties}" 
-                          WebMessageReceived="OnWebViewInteraction"/>
+        <wv2:WebView2 x:Name="webView"
+                      CreationProperties="{StaticResource EvergreenWebView2CreationProperties}" 
+                      WebMessageReceived="OnWebViewInteraction"/>
         </DockPanel>
         <Border Grid.Row="2"
                     BorderThickness="0"

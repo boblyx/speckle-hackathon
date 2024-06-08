@@ -6,13 +6,14 @@ using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace FamilyMan
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class SendWindow : Window
+    public partial class FamWindow : Window
     {
         //private bool _firstLoad = true;
         //private MainWindowView view;
@@ -21,7 +22,7 @@ namespace FamilyMan
         public bool isLoaded = false;
         public WebView2 webViewObj;
 
-        public SendWindow(UIApplication app)
+        public FamWindow(UIApplication app)
         {
             InitializeComponent();
             launchSender = new LaunchFamService(app, webView);

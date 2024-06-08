@@ -14,7 +14,7 @@ namespace FamilyMan
 
         private RevitActionsEnum _currentRevitActions;
         private readonly ExternalEvent _externalEvent;
-        public SendWindow sendWindow;
+        public FamWindow famWindow;
         //public 
 
         public RevitEventHandler()
