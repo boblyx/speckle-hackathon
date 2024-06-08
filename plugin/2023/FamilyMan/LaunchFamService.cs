@@ -7,13 +7,13 @@ using Microsoft.Web.WebView2.Core;
 
 namespace FamilyMan
 {
-    public class LaunchSendService
+    public class LaunchFamService
     {
         private WebView2 webView;
         private readonly RevitEvent revitEvent;
         public Action CloseAction { get; set; }
 
-        internal LaunchSendService(UIApplication a, WebView2 webView)
+        internal LaunchFamService(UIApplication a, WebView2 webView)
         {
             this.webView = webView;
             revitEvent = new RevitEvent();

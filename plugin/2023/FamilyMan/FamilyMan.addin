@@ -6,15 +6,15 @@
     <Assembly>FamilyMan.dll</Assembly>
     <FullClassName>FamilyMan.Command</FullClassName>
     <ClientId>28b14b25-61c1-45c0-a4b9-4a6ff36cca65</ClientId>
-    <VendorId>com.typepad.thebuildingcoder</VendorId>
-    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+    <VendorId>DP Compute</VendorId>
+    <VendorDescription>DP Compute</VendorDescription>
   </AddIn>
   <AddIn Type="Application">
     <Name>Application FamilyMan</Name>
     <Assembly>FamilyMan.dll</Assembly>
     <FullClassName>FamilyMan.App</FullClassName>
     <ClientId>f3bc8187-b359-4f19-a264-06caec00da77</ClientId>
-    <VendorId>com.typepad.thebuildingcoder</VendorId>
-    <VendorDescription>The Building Coder, http://thebuildingcoder.typepad.com</VendorDescription>
+    <VendorId>DP Compute</VendorId>
+    <VendorDescription>DP Compute</VendorDescription>
   </AddIn>
 </RevitAddIns>

@@ -28,10 +28,10 @@ namespace FamilyMan
             switch (_currentRevitActions)
             {
                 case RevitActionsEnum.Loaded:
-                    string payload = Converter.Mesher.CreatePayload(app);
-                    Debug.WriteLine(sendWindow);
-                    if (sendWindow == null) { return; };
-                    sendWindow.SendPayload(payload);
+                    //string payload = Converter.Mesher.CreatePayload(app);
+                    //Debug.WriteLine(sendWindow);
+                    //if (sendWindow == null) { return; };
+                    //sendWindow.SendPayload(payload);
                     break;
                 default:
                     Debug.WriteLine("RevitEventHandler action not defined");
