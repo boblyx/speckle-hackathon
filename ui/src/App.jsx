@@ -236,6 +236,8 @@ async function updateRendering(){
   const filteringState = filter().isolateObjects(
     familyTypeNodes.map((node) => node.model.id)
   )
+
+  // TO DO: access filtering state through filter() and unisolate if needed.
   console.log(filteringState)
 }
 
