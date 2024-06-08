@@ -8,6 +8,7 @@ import {createStore} from 'solid-js/store';
 import Header from './components/Header';
 import Finder from './pages/Finder';
 import {getFamilies_Sort_Category} from './API/Revit';
+import Changer from './pages/Changer';
 
 export const [currentPage, setCurrentPage] = createSignal("finder");
 export const [familyStore, setFamilyStore] = createStore<any>({});
@@ -34,8 +35,6 @@ const egInData = {
     }
 }
 
-const egParamData = {}
-
 const App: Component = () =>  {
 
   onMount(()=>{
@@ -55,6 +54,12 @@ const App: Component = () =>  {
       setFamilyStore(ev.detail);
     });
 
+    document.addEventListener("load-parameters", (e : Event)=>{
+      const ev = e as CustomEvent;
+      console.log(ev);
+      setParameterStore(ev.detail);
+    });
+
     // Load example families
     let revit_families = getFamilies_Sort_Category();
     setFamilyStore(egInData);
@@ -65,7 +70,12 @@ const App: Component = () =>  {
   return (
     <>
       <Header/>
-      <Finder/>
+      <Show when={currentPage() === "finder"}>
+        <Finder/>
+      </Show>
+      <Show when={currentPage() === "changer"}>
+        <Changer/>
+      </Show>
     </>
   )
 };

@@ -10,7 +10,9 @@ import {currentPage, setCurrentPage} from '../App';
 const Header : Component = () => {
   return (
     <>
-      <header class="bg-primary navbar navbar-expand-lg sticky-top min" style="min-height:90px;">
+      <header class="bg-primary navbar navbar-expand-lg sticky-top min" style="min-height:90px;\
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19); \
+        ">
         <div class = "row w-100">
           <Switch>
             <Match when = {currentPage() == "finder"}>

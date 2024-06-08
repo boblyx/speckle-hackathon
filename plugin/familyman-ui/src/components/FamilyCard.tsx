@@ -5,17 +5,26 @@
 
 import { onMount, createSignal } from 'solid-js';
 import type { Component } from 'solid-js';
-import { setCurrentPage } from '../App';
+import { parameterStore, setCurrentPage } from '../App';
 import { Family } from '../FMan';
 import { setCurrentFamily } from '../App';
+import { setParameterStore } from '../App';
 import {getParameters_Of_Uuid} from '../API/Revit';
 
 function editParam(family : Family){
   // Get all params of FamilySymbol
-  //getParameters_Of_Uuid(family.uuid);
-  setCurrentFamily(family);
-  // Change page
-  setCurrentPage("changer");
+  try{
+    let parameters = getParameters_Of_Uuid(family.uuid);
+    setCurrentFamily(family);
+    for (const key of Object.keys(parameterStore)){
+      setParameterStore(key, undefined);
+    }
+    setParameterStore(parameters);
+    // Change page
+    setCurrentPage("changer");
+  }catch(err){
+    console.error(err);
+  }
 }
 
 const FamilyCard : Component<{ family : Family

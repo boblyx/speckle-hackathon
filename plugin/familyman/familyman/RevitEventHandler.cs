@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Autodesk.Revit.UI;
 
 namespace familyman
@@ -39,8 +40,9 @@ namespace familyman
                         string parameters_json = Actions.Finder.getParameters_Of_Uuid(app, famWindow.uuid_to_find);
                         famWindow.SendPayload("load-parameters", parameters_json);
                     }
-                    catch {
+                    catch (Exception e){
                         // TODO: Send error toast
+                        Debug.WriteLine(e);
                     }
                     break;
                 default:

@@ -26,6 +26,25 @@ namespace familyman.Actions
             this.count = count;
         }
     }
+
+    public class SimpleParameter
+    {
+        public string id { get; set; }
+        public string guid { get; set; }
+        public string name { get; set; }
+        public string unit_type { get; set; }
+        public string value { get; set; }
+        public bool shared { get; set; }
+
+        public SimpleParameter(string id, string guid, string name, string unit_type, string value, bool shared = false) {
+            this.guid = guid;
+            this.id = id;
+            this.name = name;
+            this.unit_type = unit_type;
+            this.value = value;
+            this.shared = shared;
+        }
+    }
     class Finder
     {
         /// <summary>
@@ -58,7 +77,25 @@ namespace familyman.Actions
             Document doc = app.ActiveUIDocument.Document;
             Element obj = doc.GetElement(uuid);
             IList<Parameter> parameters = obj.GetOrderedParameters();
-            string json_str = JsonSerializer.Serialize(parameters);
+            Dictionary<string, SimpleParameter> simp_dict = new Dictionary<string, SimpleParameter>();
+            foreach (Parameter p in parameters) {
+                try
+                {
+                    string id = p.Id.ToString();
+                    string name = p.Definition.Name;
+                    string unit_type = "NULL";//p.GetUnitTypeId().ToString();
+                    string guid = "NULL";//p.GUID.ToString();
+                    string value = p.AsValueString();
+                    bool shared = p.IsShared;
+                    SimpleParameter simp = new SimpleParameter(id, guid, name,
+                        unit_type, value, shared);
+                    simp_dict[id] = simp;
+                }
+                catch (Exception e) {
+                    Debug.WriteLine(e);
+                }
+            }
+            string json_str = JsonSerializer.Serialize(simp_dict);
             return json_str;
         }
     }
