@@ -82,6 +82,8 @@
     <Reference Include="System.Text.Encodings.Web, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Text.Encodings.Web.8.0.0\lib\net462\System.Text.Encodings.Web.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -111,8 +113,21 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if exist "$(AppData)\Autodesk\REVIT\Addins\2023" copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2023"
-if exist "$(AppData)\Autodesk\REVIT\Addins\2023" copy "$(ProjectDir)$(OutputPath)*.dll" "$(AppData)\Autodesk\REVIT\Addins\2023"</PostBuildEvent>
+    <PostBuildEvent>if exist "$(AppData)\Autodesk\REVIT\Addins\2023" ^
+copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2023"
+
+SET outpath=$(ProjectDir)$(OutputPath)
+SET outpath=%25outpath:~0,-1%25
+
+copy $(ProjectDir)$(OutputPath)\runtimes\win-x64\native\*.dll $(ProjectDir)$(OutputPath)
+rmdir $(ProjectDir)$(OutputPath)\runtimes /s /q
+rmdir $(ProjectDir)$(OutputPath)\Win32
+rmdir $(ProjectDir)$(OutputPath)\Win64
+
+if exist "$(AppData)\Autodesk\REVIT\Addins\2023" ^
+xcopy %25outpath%25 $(AppData)\Autodesk\REVIT\Addins\2023\FamilyMan /c /i /e /h /y
+
+rem echo %25outpath%25</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

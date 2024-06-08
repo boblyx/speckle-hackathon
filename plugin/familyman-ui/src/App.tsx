@@ -1,4 +1,8 @@
-import { onCleanup, onMount, createSignal, For } from 'solid-js';
+/**
+ * App.tsx
+ * @author Bob Lee
+ */
+import { onCleanup, onMount, createSignal, For, Show } from 'solid-js';
 import type { Component } from 'solid-js';
 import {createStore} from 'solid-js/store';
 import * as bootstrap from 'bootstrap';
@@ -28,18 +32,16 @@ const egInData = {
 const App: Component = () =>  {
 
   onMount(()=>{
-
-    document.addEventListener("loadCategories", ()=>{
+    document.addEventListener("loadCategories", (e : Event)=>{
       // Populates search bar
+      const ev = e as CustomEvent;
+      console.log(ev);
     });
 
-    document.addEventListener("loadFamilies", ()=>{
-
+    document.addEventListener("loadFamilies", (e : Event)=>{
+      const ev = e as CustomEvent;
+      console.log(ev);
     });
-
-    document.addEventListener("loadFamilyCards", ()=>{
-
-    })
 
     // Load example families
     setFamilyStore(egInData);
@@ -56,8 +58,10 @@ const App: Component = () =>  {
               console.log(key);
               return (
                 <>
-                  <FamilyCategoryList category={key} 
-                  families = {familyStore[key]}/>
+                  <Show when = {Object.keys(familyStore[key]).length > 0}>
+                    <FamilyCategoryList category={key} 
+                      families = {familyStore[key]}/>
+                  </Show>
                 </>
               )
             }

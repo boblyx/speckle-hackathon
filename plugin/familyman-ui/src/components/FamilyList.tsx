@@ -1,3 +1,7 @@
+/**
+ * FamilyList.tsx
+ * @author Bob Lee
+ */
 import { onCleanup, onMount, createSignal, For } from 'solid-js';
 import type { Component } from 'solid-js';
 import * as bootstrap from 'bootstrap';

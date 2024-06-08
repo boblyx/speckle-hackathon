@@ -12,6 +12,7 @@ using Autodesk.Revit.UI.Selection;
 namespace FamilyMan
 {
     [Transaction(TransactionMode.Manual)]
+    [Regeneration(RegenerationOption.Manual)]
     public class Command : IExternalCommand
     {
         public Result Execute(
@@ -19,39 +20,17 @@ namespace FamilyMan
           ref string message,
           ElementSet elements)
         {
-            UIApplication uiapp = commandData.Application;
-            UIDocument uidoc = uiapp.ActiveUIDocument;
-            Application app = uiapp.Application;
-            Document doc = uidoc.Document;
-
-            // Access current selection
-
-            Selection sel = uidoc.Selection;
-
-            // Retrieve elements from database
-
-            FilteredElementCollector col
-              = new FilteredElementCollector(doc)
-                .WhereElementIsNotElementType()
-                .OfCategory(BuiltInCategory.INVALID)
-                .OfClass(typeof(Wall));
-
-            // Filtered element collector is iterable
-
-            foreach (Element e in col)
+            try
             {
-                Debug.Print(e.Name);
+                FamWindow famWindow = new FamWindow(commandData.Application);
+                App.rvtHandler.famWindow = famWindow;
+                famWindow.Show();
+                return Result.Succeeded;
             }
-
-            // Modify document within a transaction
-
-            using (Transaction tx = new Transaction(doc))
-            {
-                tx.Start("Transaction Name");
-                tx.Commit();
+            catch (Exception ex) {
+                Debug.WriteLine(ex.Message);
+                return Result.Failed;
             }
-
-            return Result.Succeeded;
         }
     }
 }
