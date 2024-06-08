@@ -1,15 +1,16 @@
 ﻿using System.Diagnostics;
 using Autodesk.Revit.UI;
 
-
-namespace FamilyMan
+namespace familyman
 {
     public class RevitEventHandler : IExternalEventHandler
     {
         public enum RevitActionsEnum
         {
             Invalid = -1,
-            Loaded
+            Loaded,
+            getFamilies_Sort_Category,
+            getFamilies_Of_Category
         }
 
         private RevitActionsEnum _currentRevitActions;
@@ -27,11 +28,11 @@ namespace FamilyMan
             Debug.WriteLine("Handling!");
             switch (_currentRevitActions)
             {
-                case RevitActionsEnum.Loaded:
-                    //string payload = Converter.Mesher.CreatePayload(app);
-                    //Debug.WriteLine(sendWindow);
-                    //if (sendWindow == null) { return; };
-                    //sendWindow.SendPayload(payload);
+                case RevitActionsEnum.getFamilies_Sort_Category:
+                    string family_json = Actions.Finder.getFamilySymbols_Sort_Category(app);
+                    famWindow.SendPayload("load-families", family_json);
+                    break;
+                case RevitActionsEnum.getFamilies_Of_Category:
                     break;
                 default:
                     Debug.WriteLine("RevitEventHandler action not defined");

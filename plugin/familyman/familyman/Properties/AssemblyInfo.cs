@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Atoms")]
-[assembly: AssemblyDescription("Revit Add-In Description for Atoms")]
+[assembly: AssemblyTitle("familyman")]
+[assembly: AssemblyDescription("Revit Add-In Description for familyman")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Autodesk Inc.")]
-[assembly: AssemblyProduct("Atoms Revit C# .NET Add-In")]
-[assembly: AssemblyCopyright("Copyright (C) 2023 by Jeremy Tammik, Autodesk Inc.")]
+[assembly: AssemblyCompany("DP Architects Pte Ltd")]
+[assembly: AssemblyProduct("familyman Revit C# .NET Add-In")]
+[assembly: AssemblyCopyright("Copyright (C) 2024 Bob Lee, DP Architects Pte Ltd")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

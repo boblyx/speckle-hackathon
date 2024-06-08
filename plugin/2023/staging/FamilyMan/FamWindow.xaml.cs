@@ -56,8 +56,9 @@ namespace FamilyMan
 
             switch (result.action)
             {
-                case "test":
-                    await webView.CoreWebView2.ExecuteScriptAsync("testFromWV2()");
+                case "getFamilies_Sort_Category":
+                    Debug.WriteLine("Getting all families by category!");
+                    App.rvtHandler.Raise(RevitEventHandler.RevitActionsEnum.getFamilies_Sort_Category);
                     break;
 
                 case "loaded":
@@ -65,19 +66,17 @@ namespace FamilyMan
                     isLoaded = true;
                     App.rvtHandler.Raise(RevitEventHandler.RevitActionsEnum.Loaded);
                     break;
-                case "openweb":
-                    Debug.WriteLine(result.payload);
-                    System.Diagnostics.Process.Start(Convert.ToString(result.payload));
-                    break;
+
                 default:
                     Debug.WriteLine("Unhandled action. Terminating.");
                     break;
             }
         }
 
-        public async void SendPayload(string payload)
+        public async void SendPayload(string fn, string payload)
         {
-            string payloadScript = "sendPayload(" + "{"+payload+"}" + ")";
+            string payloadScript = "document.dispatchEvent(new CustomEvent(\"" + fn + "\", {\"detail\":" + payload + "}))";
+            Debug.WriteLine(payloadScript);
             var res1 = await webView.CoreWebView2.ExecuteScriptAsync(payloadScript);
             Debug.WriteLine(res1);
             return;

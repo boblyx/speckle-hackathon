@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("FamilyMaker")]
-[assembly: AssemblyDescription("Revit Add-In Description for FamilyMaker")]
+[assembly: AssemblyTitle("FamilyMan")]
+[assembly: AssemblyDescription("Revit Add-In Description for FamilyMan")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Autodesk Inc.")]
-[assembly: AssemblyProduct("FamilyMaker Revit C# .NET Add-In")]
-[assembly: AssemblyCopyright("Copyright (C) 2023 by Jeremy Tammik, Autodesk Inc.")]
+[assembly: AssemblyCompany("DP Architects Pte Ltd")]
+[assembly: AssemblyProduct("FamilyMan Revit C# .NET Add-In")]
+[assembly: AssemblyCopyright("Copyright (C) 2024, by Bob Lee, DP Architects Pte Ltd")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

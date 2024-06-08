@@ -10,18 +10,25 @@ import { Family } from '../FMan';
 import FamilyCard from './FamilyCard';
 
 function deserializeFamily(obj : {
+                           uuid : string
                            name : string, 
                            ftype : string, 
                            count : number
 }){
-  return new Family(obj.name, obj.ftype, obj.count)
+  return new Family(obj.uuid, obj.name, obj.ftype, obj.count)
 }
 
-const FamilyCategoryList : Component<{category : string, 
-  families : {name : string, ftype: string, count: number}[]}> = (props) => {
+const FamilyCategoryList : Component<{
+  category : string, 
+  families : {
+    uuid: string, 
+    name : string, 
+    ftype: string, 
+    count: number
+  }[]
+}> = (props) => {
 
   return (
-
     <>
       <details class = "mb-4" open>
         <summary class="fs-2 mb-2 text-primary">

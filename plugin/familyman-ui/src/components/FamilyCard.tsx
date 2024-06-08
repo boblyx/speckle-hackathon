@@ -11,7 +11,7 @@ const FamilyCard : Component<{ family : Family
                             }> = (props) => {
   return(
     <>
-      <div class = "card">
+      <div class = "card mb-2">
         <div class = "card-body">
           <div class = "row">
             <div class = "col-auto">

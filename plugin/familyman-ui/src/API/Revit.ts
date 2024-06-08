@@ -1,19 +1,20 @@
 /**
  * Revit.ts
  * For Revit API interactions
+ * @author Bob Lee
  */
 function sendWebView2Msg(msg : any){
   let w = window as any;
   let wv2msg = msg;
-  w.chome?.webview?.postMessage(wv2msg);
+  w.chrome?.webview?.postMessage(wv2msg);
 }
 
-function getFamilies_Sort_Category(){
+export function getFamilies_Sort_Category(){
   console.log("Getting all families from Revit!");
   sendWebView2Msg({"action": "getFamilies_Sort_Category", "payload":{}});
 }
 
-function getFamilies_Of_Category(cat = "Doors"){
+export function getFamilies_Of_Category(cat = "Doors"){
   console.log("Getting families from Revit!");
   let payload = {
     "category": cat

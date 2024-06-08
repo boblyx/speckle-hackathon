@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Command">
+    <Text>Command familyman</Text>
+    <Description>Some description for familyman</Description>
+    <Assembly>familyman/familyman.dll</Assembly>
+    <FullClassName>familyman.Command</FullClassName>
+    <ClientId>d0816839-5ec1-4d51-bd85-25b9ac2c2d13</ClientId>
+    <VendorId>sg.com.dpa</VendorId>
+    <VendorDescription>DP Architects Pte Ltd</VendorDescription>
+  </AddIn>
+  <AddIn Type="Application">
+    <Name>Application familyman</Name>
+    <Assembly>familyman/familyman.dll</Assembly>
+    <FullClassName>familyman.App</FullClassName>
+    <ClientId>6e046389-68f4-432b-afa6-01add2cd610c</ClientId>
+    <VendorId>sg.com.dpa</VendorId>
+    <VendorDescription>DP Architects Pte Ltd</VendorDescription>
+  </AddIn>
+</RevitAddIns>

@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:FamilyMan"
         mc:Ignorable="d"
         Title="FamilyMan"
-        Width="450"
+        Width="650"
         Height="800"
         ResizeMode="CanResize">
 
