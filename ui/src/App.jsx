@@ -3,17 +3,15 @@ import styles from './App.module.css';
 import { createSignal, onMount } from "solid-js";
 import { FS_URL, TOKEN, getUserData, goToSpeckleAuthPage, speckleFetch, speckleLogOut } from './speckle/SpeckleUtils';
 import { useNavigationGuard } from './speckle/NavigationGuard';
-import SpeckleViewer, { filter, loadModel, speckleViewer } from './speckle/speckle-view';
+import SpeckleViewer, { loadModel, speckleViewer } from './speckle/speckle-view';
 import { queryAllStreams, streamQuery } from './speckle/SpeckleQueries';
 import DataViewer, { dataView, selectedTypeMark } from './components/DataViewer';
-import { FilteringExtension } from "@speckle/viewer";
 
 export const [userData, setUserData] = createSignal(null);
 export const [winlocation, setWinLocation] = createSignal(window.location.pathname)
 export const [streamId, setStreamId] = createSignal(null);
 export const [modelName, setModelName] = createSignal(null);
 export const [selectedCategory, setSelectedCategory] = createSignal(null);
-
 
 export const BIM_CATEGORIES = [
   'Door',
@@ -216,26 +214,66 @@ async function refreshLog(e){
 }
 
 async function updateRendering(){
+
+  // Get parameters to cut down search space
+  // var params = {
+  //   category : "",
+  //   family: "",
+  // }
+  // const relevantDOMElems = document.querySelectorAll(`[data-view="${dataView()}"][data-type='cell'][data-typemark="${selectedTypeMark()}"]`)
+  // relevantDOMElems.forEach(child => {
+
+  // })
+
+  const selNodes = []
+  const unselNodes = []
+
   const worldTree = speckleViewer().getWorldTree();
   const renderTree = worldTree.getRenderTree();
 
-  var familyTypeNodes = worldTree.findAll((node) => {
-    if (!node.model.raw.speckle_type) return;
+  var _ = worldTree.walk((node) => {
     const rawModelData = node['model']['raw'];
     const category = rawModelData['category'];
     if (category=='Doors'){
       if ('definition' in rawModelData){
         const familyName = rawModelData['definition']['family']
-        if (familyName == "MLD_DOR_Timber_Double"){
-          return node;
+        if (familyName == "MLD_DOR_Timber_Single_SS"){
+          selNodes.push(node);
         }
       }
     }
+    else {
+      unselNodes.push(node);
+    }
+    return true;
   })
 
-  const filteringState = filter().isolateObjects(
-    familyTypeNodes.map((node) => node.model.id)
-  )
+  // var test = renderTree.getInstances()
+  // console.log(test)
+
+  selNodes.forEach(node => {
+    const rvs = renderTree.getRenderViewsForNode(node);
+    // const materialData = {
+    //   color: 0xee0022,
+    //   opacity: 1,
+    //   roughness: 1,
+    //   metalness: 0,
+    //   vertexColors: false,
+    // };
+    // speckleViewer().setMaterial(rvs, materialData);
+  })
+
+  unselNodes.forEach(node => {
+    const rvs = renderTree.getRenderViewsForNode(node);
+    const materialData = {
+      color: 0xee0022,
+      opacity: 0.3,
+      roughness: 1,
+      metalness: 0,
+      vertexColors: false,
+    };
+    speckleViewer().setMaterial(rvs, materialData);
+  })
 }
 
 function App() {
@@ -280,11 +318,23 @@ function App() {
                 <div id='speckle-model-dropdown' class='dropdown hidden'></div>
               </div>
 
+              {/* <div id='navbar-speckle-bimcategory-select' class='w-64'>
+                <button onclick={openBIMCategoryDropdown} id='speckle-bimcategory-button' class='basic-text text-center w-full' >All</button>
+                <input type='text' id='speckle-bimcategory-input' placeholder="" hidden></input>
+                <div id='speckle-bimcategory-dropdown' class='dropdown hidden'>
+                  <ul class='unordered-list'>
+                    <li><label onclick={selectBIMCategory} data-category='All' class='list-item'>All</label></li>
+                    <li><label onclick={selectBIMCategory} data-category='Doors' class='list-item'>Doors</label></li>
+                    <li><label onclick={selectBIMCategory} data-category='Walls' class='list-item'>Walls</label></li>
+                    <li><label onclick={selectBIMCategory} data-category='Columns' class='list-item'>Columns</label></li>
+                  </ul>
+                </div>
+              </div> */}
+
             </div>
 
-            <button id='navbar-speckle-load-model' className='basic-text' onClick={loadModel}>Load Model</button>
+            <button id='navbar-speckle-refresh-log' className='basic-text' onClick={loadModel}>Load Model</button>
             <button id='navbar-speckle-refresh-log' className='basic-text' onClick={refreshLog}>Refresh Log</button>
-            {/* <button id='navbar-speckle-debug' className='basic-text' onClick={refreshLog}>Debug</button> */}
           </div>
           }
       </div>
