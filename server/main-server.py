@@ -10,7 +10,6 @@ from pprint import pprint;
 import re;
 import json 
 
-
 app = FastAPI()
 
 # CORS settings
