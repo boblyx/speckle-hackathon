@@ -16,7 +16,7 @@ namespace FamilyMan
     {
         //private bool _firstLoad = true;
         //private MainWindowView view;
-        private LaunchSendService launchSender;
+        private LaunchFamService launchSender;
         public UIApplication uiApp;
         public bool isLoaded = false;
         public WebView2 webViewObj;
@@ -24,7 +24,7 @@ namespace FamilyMan
         public SendWindow(UIApplication app)
         {
             InitializeComponent();
-            launchSender = new LaunchSendService(app, webView);
+            launchSender = new LaunchFamService(app, webView);
             DataContext = launchSender;
             launchSender.CloseAction = new Action(this.Close);
             uiApp = app;

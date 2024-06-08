@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="FamilyMan"
         Width="450"
-        Height="200"
+        Height="800"
         ResizeMode="CanResize">
 
     <Window.Resources>
