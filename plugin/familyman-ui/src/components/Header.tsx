@@ -3,9 +3,15 @@
  * @author Bob Lee
  */
 import type { Component } from 'solid-js';
-import { Match, Switch } from 'solid-js';
+import { Match, Switch, createSignal } from 'solid-js';
 import * as bootstrap from 'bootstrap';
 import {currentPage, setCurrentPage} from '../App';
+
+export const [modelURL, setModelURL] = createSignal<string>("https://app.speckle.systems/projects/58ae34f884/models/87584774f1");
+
+function updateModelURL(e : any){
+  setModelURL(e.target.value);
+}
 
 const Header : Component = () => {
   return (
@@ -21,16 +27,20 @@ const Header : Component = () => {
                   ⟳
                 </button>
               </div>
+              {/*
               <div class = "ms-2 mb-2 col-auto">
                 <label for = "catfield" class = "text-light">Family Category:</label>
                 <input id="catfield" class = "form-control" 
                   type="text" placeholder = "Doors"></input>
-              </div>
-              <div class = "ms-2 col-auto">
-                <label for = "namefield" class = "text-light">Family Name: </label>
+              </div>*/}
+              <div class = "ms-2 col-6">
+                <label for = "speckle model field" class = "text-light">Model URL: </label>
                 <input id = "namefield" class = "form-control" 
-                  type="text" placeholder = "Single Timber Door"></input>
-              </div>
+                  type="text" placeholder = "https://app.speckle.systems/projects/.../models/..."
+                  value = {modelURL()}
+                  onkeyup={(e)=>{updateModelURL(e)}}
+                ></input>
+                  </div>
             </Match>
             <Match when = {currentPage() == "changer"}>
 

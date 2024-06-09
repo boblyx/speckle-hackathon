@@ -6,6 +6,10 @@ import os
 from dotenv import load_dotenv, dotenv_values
 from utils.excel_utils import check_type_mark, update_excel, FamilyDatabaseParams
 import subprocess
+from pprint import pprint;
+import re;
+import json 
+
 
 app = FastAPI()
 
@@ -39,10 +43,17 @@ class UpdateRequest(BaseModel):
 class MatchRequest(BaseModel):
     family_params: FamilyDatabaseParams
 
+class InitRequest(BaseModel):
+    speckle : str
+    families : dict
+    pass
+
 # Load environment variables
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env.' + os.environ.get('NODE_ENV', 'development'))
 load_dotenv(dotenv_path)
 env = dotenv_values(".env."+os.environ.get('NODE_ENV', 'development'))
+DB_OUT = os.getenv('DB_OUT') #
+if DB_OUT == None: DB_OUT = os.path.join(os.getcwd(), "db")
 SPECKLE_URL = os.getenv('VITE_SPECKLE_URL')
 APP_SPECKLE_ID = os.getenv('VITE_SPECKLE_ID')
 APP_SPECKLE_NAME = os.getenv('VITE_SPECKLE_NAME')
@@ -70,6 +81,22 @@ def exchange_access_code(request: AccessCodeRequest):
         return response_data
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/initialize_db")
+def initialize_db(request : InitRequest):
+    url = request.speckle;
+    project_id = re.search("(?<=projects\/)(.*)(?=\/models)", url).group(0)
+    model_id = re.search("(?<=models\/)(.*)", url).group(0)
+    new_db = os.path.join(DB_OUT, "stream_" + project_id)
+    new_model = os.path.join(new_db, "model_" + model_id)
+    new_proposal = os.path.join(new_model, "proposals")
+    new_family_ledger = os.path.join(new_model, "master.json")
+    os.makedirs(new_proposal, exist_ok=True)
+    with open(new_family_ledger, "w") as f:
+        f.write(json.dumps(request.families));
+        pass
+    # TODO: raise error if id is wrong
+    return {"result": "OK"}
 
 @app.post("/speckle-query")
 def speckle_query(request: QueryRequest):
