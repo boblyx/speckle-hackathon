@@ -233,7 +233,6 @@ def update_db(filepath, data, proposal_id, speckle_info):
         for new_family in type_marks:
             if new_family["Type Mark"] in existing_type_marks:
                 print(f"Existing type mark '{new_family['Type Mark']}' found in database. Skipping.")
-                print("Creating change proposal")
             else:
                 # Add the new family to the database
                 db_data["families"][new_family["id"]] = data["families"][new_family["id"]]

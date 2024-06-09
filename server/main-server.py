@@ -165,6 +165,10 @@ def update_database(request: UpdateRequest):
     if request.proposal == "" or request.proposal == None:
         response_data = {"Response" : "Unable to detect proposal in request parameters."}
         return response_data
+    
+    if request.proposal == "" or request.proposal == None:
+        response_data = {"Response" : "Unable to detect proposal in request parameters."}
+        return response_data
 
     speckle_info = {"stream": request.stream, 
             "model": request.model, 
