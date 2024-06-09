@@ -75,8 +75,6 @@ async function sendChangeRequest(e : any) {
   console.log(res);
   let t = new Toast("FamilyMan", "", "Change Request Submitted!");
   
-
-
   t.show();
 
 }
