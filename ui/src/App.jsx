@@ -10,8 +10,8 @@ import { FilteringExtension } from "@speckle/viewer";
 
 export const [userData, setUserData] = createSignal(null);
 export const [winlocation, setWinLocation] = createSignal(window.location.pathname)
-export const [streamId, setStreamId] = createSignal(null);
-export const [modelName, setModelName] = createSignal(null);
+export const [stream, setStream] = createSignal({id:"58ae34f884",name:"main"});
+export const [model, setModel] = createSignal({id:"87584774f1",name:"0220_apartment tier 1"});
 export const [selectedCategory, setSelectedCategory] = createSignal(null);
 
 
@@ -71,7 +71,7 @@ async function selectStream(e){
         // Fill in default with first stream obtained
         if (s==0){
             streamInput_.value = streamQueryRes.data.stream.name;
-            setStreamId(id);
+            setStream({id:id, name:streamInput_.value});
         }
     }
   
@@ -82,7 +82,7 @@ async function selectStream(e){
         streamLabel.addEventListener('click', async () => {
             streamInput_.value = streamLabel.getAttribute('stream-name');
             streamButton_.innerHTML = streamInput_.value;
-            await setStreamId(streamLabel.getAttribute('stream-id'));
+            await setStream({id:streamLabel.getAttribute('stream-id'), name:streamLabel.getAttribute('stream-name')});
             streamDropdown_.classList.add('hidden');
         })
     }
@@ -98,20 +98,36 @@ async function selectStream(e){
 // Function to extract unique link model names from the models/branch list
 function extractUniqueLinks(data) {
   const tierPattern = /main\/([^/]+)/;
-  const tiers = data
-    .map(branch => {
-      const match = branch.name.match(tierPattern);
-      return match ? match[1] : null;
-    })
-    .filter(tier => tier !== null);
-  
-  // Return unique tiers
-  return [...new Set(tiers)];
+  const uniqueTiers = new Map();
+
+  data.forEach(branch => {
+    const match = branch.name.match(tierPattern);
+    if (match) {
+      const name = match[1];
+      // Use the name as the key to ensure uniqueness
+      if (!uniqueTiers.has(name)) {
+        uniqueTiers.set(name, { id: branch.id, name });
+      }
+    }
+  });
+
+  // Convert the Map values to an array
+  return Array.from(uniqueTiers.values());
+}
+
+function extractMainModel(data){
+  var mainModel;
+  data.every(branch => {
+    if (branch.name == "main"){
+      mainModel = {id:branch.id, name:branch.name};
+    }
+  });
+  return mainModel;
 }
 
 // Open dropdown which lists all the branches/models in the selected stream.
 async function selectModel(e){
-  if (streamId()){
+  if (stream()){
     console.log("Getting models...")
     const inputDiv = document.getElementById('speckle-model-input');
     const dropdownDiv = document.getElementById('speckle-model-dropdown');
@@ -124,13 +140,14 @@ async function selectModel(e){
 
       dropdownDiv.replaceChildren();
       let token = localStorage.getItem(TOKEN);
-      var res = await speckleFetch(streamQuery(streamId()), token);
+      var res = await speckleFetch(streamQuery(stream().id), token);
       var branches = res.data.stream.branches.items
       if (branches.length == 0){
           inputDiv.value = "No branches found. Something is wrong..."
           return
       }
-  
+
+      const mainModel = extractMainModel(branches)
       const uniqueLinks = extractUniqueLinks(branches);
       // Create UL element
       var unorderedList = document.createElement('ul');
@@ -140,16 +157,18 @@ async function selectModel(e){
   
       // Hard coding main model option in drop down
       var list_ = document.createElement('li')
-  
+
       var label_ = document.createElement('button')
       label_.id = `speckle-model-main`
-      label_.setAttribute('model-name', 'Main')
-      label_.innerText = 'Main'
+      label_.setAttribute('model-name', 'main')
+      label_.setAttribute('model-id', mainModel.id)
+      console.log(mainModel.id)
+      label_.innerText = 'main'
       label_.setAttribute('class', 'list-item text-left')
       list_.appendChild(label_)
       unorderedList.appendChild(list_)
   
-  
+      
       for (let l=0; l<uniqueLinks.length; l++){
         var link = uniqueLinks[l]
         // console.log(`Obtained branch Id: ${branch.id}`)
@@ -157,9 +176,10 @@ async function selectModel(e){
         var list_ = document.createElement('li')
   
         var label_ = document.createElement('button')
-        label_.id = `speckle-model-${link}`
-        label_.setAttribute('model-name', link)
-        label_.innerText = link
+        label_.id = `speckle-model-${link.name}`
+        label_.setAttribute('model-name', link.name)
+        label_.setAttribute('model-id', link.id)
+        label_.innerText = link.name
         label_.setAttribute('class', 'list-item text-left')
         list_.appendChild(label_)
         unorderedList.appendChild(list_)
@@ -172,7 +192,7 @@ async function selectModel(e){
           label_.addEventListener('click', async () => {
               inputDiv.value = label_.getAttribute('model-name');
               button_.innerHTML = inputDiv.value;
-              await setModelName(inputDiv.value);
+              await setModel({id:label_.getAttribute('model-id'), name:label_.getAttribute('model-name')});
               dropdownDiv.classList.add('hidden');
           })
       }
@@ -247,8 +267,6 @@ function App() {
     setUserData(data);
     
     // DEBUGGING
-    await setStreamId("58ae34f884");
-    await setModelName("0220_apartment tier 1");
     await loadModel();
     await updateRendering();
   })
@@ -263,7 +281,7 @@ function App() {
           </div>
           :
           <div className='flex flex-row gap-x-5 place-items-center overflow-visible max-h-16'>
-            <button id='navbar-speckle-logout' class='basic-text' onClick={()=> SpeckleLogout() }>Logout</button>
+            <button id='navbar-speckle-logout' class='basic-text' onClick={()=> speckleLogOut() }>Logout</button>
             <div id='navbar-speckle-user' class='text-white font-medium text-2xl'> {userData().data.activeUser.name} </div>
 
             <div id='whitespace' class='w-24 h-1'></div>

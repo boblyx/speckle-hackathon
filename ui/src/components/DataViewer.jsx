@@ -6,7 +6,7 @@ import ChangelogView from './ChangelogView';
 import DataviewFilters from './DataviewFilters';
 
 export const [selectedCategory, setSelectedCategory] = createSignal('');
-export const [dataView, setDataView] = createSignal('changelog');
+export const [dataView, setDataView] = createSignal('database');
 export const [dataPropertyFilter, setDataPropertyFilter] = createSignal(null);
 export const [selectedTypeMark, setSelectedTypeMark] = createSignal(null);
 

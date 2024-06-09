@@ -1,5 +1,5 @@
 import { createSignal, For, onMount, Show } from 'solid-js';
-import { BIM_CATEGORIES } from '../App';
+import { BIM_CATEGORIES, model, stream } from '../App';
 import { FS_URL } from '../speckle/SpeckleUtils';
 import { dataPropertyFilter, FAMILYPROPERTIES, selectedTypeMark, setSelectedTypeMark } from './DataViewer';
 
@@ -57,6 +57,10 @@ export async function retrieveDatabase(){
                 headers:{
                     'Content-Type':'application/json'
                 },
+                body: JSON.stringify({
+                    stream: stream().id,
+                    model: model().id
+                })
             }
         )
         const databaseJson = await databaseRes.json();

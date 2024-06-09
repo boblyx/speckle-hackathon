@@ -267,3 +267,15 @@ def match_typemark(filepath, type_mark):
                         return "test000.rfa"
     
     return None
+
+def extractDatabase(filepath):
+    """
+    Extracts the entire database as a JSON object, represented as a nested dictionary.
+    
+    :param filepath: The path to the JSON file.
+    :return: The JSON data as a nested dictionary.
+    """
+    with open(filepath, 'r') as file:
+        data = json.load(file)
+    
+    return data

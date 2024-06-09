@@ -1,12 +1,17 @@
 import { createSignal, For, onMount, Show } from 'solid-js';
-import { BIM_CATEGORIES, modelName } from '../App';
+import { BIM_CATEGORIES, model } from '../App';
 import filterIcon from '../assets/filter.png';
 import { toggleFilterList } from './DataviewFilters';
 
 async function toggleSourceFilter(){
     const filterContainer_ = document.getElementById('dataviewer-filters-source');
     const filterBtn_ = document.querySelector('[data-type="filter"][data-filter="source"]');
-    if (modelName() == "Main"){
+    if (!model()){
+        filterContainer_.classList.add('disabled');
+        filterBtn_.classList.remove('cursor-pointer');
+        filterBtn_.removeEventListener('click', toggleFilterList);
+    }
+    else if (model().name == "main"){
         filterContainer_.classList.remove('disabled');
         filterBtn_.classList.add('cursor-pointer');
         filterBtn_.addEventListener('click', toggleFilterList);
