@@ -36,7 +36,8 @@ function updateParam(e : any){
   setStagedParameters(key, updated);
 }
 
-async function sendChangeRequest() {
+async function sendChangeRequest(e : any) {
+
   const info = speckleinfo(modelURL());
   const proposal = String(new Date().getTime());
 
@@ -44,18 +45,20 @@ async function sendChangeRequest() {
   let uuid = currentFamily().uuid;
   let name = currentFamily().name;
   let ftype = currentFamily().ftype;
+  let category = currentFamily().category;
   console.log({...stagedParameters});
 
   let payload = {
     families: {
-      uuid: {
+      [uuid]: {
         name: name,
         ftype: ftype,
+        category: category,
         parameters: new_parameters
       }
     }
   }
-  let  res = await axios({
+  let config = {
     url: CHANGE_REQ_URL,
     method: 'post',
     data: {
@@ -64,7 +67,11 @@ async function sendChangeRequest() {
       ,proposal: proposal
       ,input_data: payload
     }
-  });
+  }
+  console.log(config);
+  let  res = await axios(
+    config
+  );
   console.log(res);
   let t = new Toast("FamilyMan", "", "Change Request Submitted!");
   
@@ -92,7 +99,7 @@ const Changer : Component = () => {
             <h6>{currentFamily().ftype}</h6>
           </div>
           <div class = "col-auto">
-            <button class = "btn btn-primary" onclick = {() => sendChangeRequest()}> Request Change</button>
+            <button data-label="Request Change" class = "btn btn-primary" onclick = {(e) => sendChangeRequest(e)}>Request Change</button>
           </div>
         </div>
             <For each = { Object.keys(parameterStore) }>

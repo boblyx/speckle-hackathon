@@ -156,7 +156,7 @@ def create_speckle_objects(revit_uuid, speckle_info, new_data, proposal_id):
     query refObj($query: [JSONObject!]){
         stream(id:"%s"){
             object(id:"%s"){
-                children(depth: 100, query: $query){
+                children(depth: 300, query: $query){
                     objects {
                         data
                     }
