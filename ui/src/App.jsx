@@ -236,9 +236,6 @@ async function updateRendering(){
   const filteringState = filter().isolateObjects(
     familyTypeNodes.map((node) => node.model.id)
   )
-
-  // TO DO: access filtering state through filter() and unisolate if needed.
-  console.log(filteringState)
 }
 
 function App() {
@@ -282,19 +279,6 @@ function App() {
                 <input type='text' id='speckle-model-input' placeholder="" hidden></input>
                 <div id='speckle-model-dropdown' class='dropdown hidden'></div>
               </div>
-
-              {/* <div id='navbar-speckle-bimcategory-select' class='w-64'>
-                <button onclick={openBIMCategoryDropdown} id='speckle-bimcategory-button' class='basic-text text-center w-full' >All</button>
-                <input type='text' id='speckle-bimcategory-input' placeholder="" hidden></input>
-                <div id='speckle-bimcategory-dropdown' class='dropdown hidden'>
-                  <ul class='unordered-list'>
-                    <li><label onclick={selectBIMCategory} data-category='All' class='list-item'>All</label></li>
-                    <li><label onclick={selectBIMCategory} data-category='Doors' class='list-item'>Doors</label></li>
-                    <li><label onclick={selectBIMCategory} data-category='Walls' class='list-item'>Walls</label></li>
-                    <li><label onclick={selectBIMCategory} data-category='Columns' class='list-item'>Columns</label></li>
-                  </ul>
-                </div>
-              </div> */}
 
             </div>
 
