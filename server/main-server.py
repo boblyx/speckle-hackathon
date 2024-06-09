@@ -102,8 +102,14 @@ def initialize_db(request : InitRequest):
     new_proposal = os.path.join(new_model, "proposals")
     new_family_ledger = os.path.join(new_model, "master.json")
     os.makedirs(new_proposal, exist_ok=True)
+    flattened_families = {"families": {}}
+    for cat, families in request.families.items():
+        for uid, params in families.items():
+            flattened_families["families"][uid] = params
+        pass
+    pprint(flattened_families);
     with open(new_family_ledger, "w") as f:
-        f.write(json.dumps(request.families));
+        f.write(json.dumps(flattened_families));
         pass
     # TODO: raise error if id is wrong
     return {"result": "OK"}
