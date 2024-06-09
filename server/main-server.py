@@ -165,10 +165,14 @@ def update_database(request: UpdateRequest):
     if request.proposal == "" or request.proposal == None:
         response_data = {"Response" : "Unable to detect proposal in request parameters."}
         return response_data
+
+    speckle_info = {"stream": request.stream, 
+            "model": request.model, 
+            "proposal": request.proposal}
     
     try:
         db_file_path = os.path.join(APP_DATABASE_WSL_FOLDER, f"stream_{request.stream}", f"model_{request.model}","master.json")
-        update_db(db_file_path, request.input_data)
+        update_db(db_file_path, request.input_data, request.proposal, speckle_info)
         return {"Response" : "Updating of database complete."}
 
     except requests.exceptions.RequestException as e:
