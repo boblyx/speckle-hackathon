@@ -14,6 +14,10 @@ def find_type_mark_value(data):
             return param_data.get("value")
     return None
 
+def create_proposal(filepath, data):
+    print(filepath)
+    pass
+
 def update_db(filepath, data):
     """
     Update the database JSON file with new family data, ensuring no duplicate 'Type Mark' values are added.
@@ -48,6 +52,8 @@ def update_db(filepath, data):
         for new_family in type_marks:
             if new_family["Type Mark"] in existing_type_marks:
                 print(f"Existing type mark '{new_family['Type Mark']}' found in database. Skipping.")
+                print("Creating change proposal")
+                create_proposal(filepath, data);
             else:
                 # Add the new family to the database
                 db_data["families"][new_family["id"]] = data["families"][new_family["id"]]
