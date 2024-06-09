@@ -53,6 +53,18 @@ code {
   @apply max-h-5 max-w-5
 }
 
-.filter-category-container {
+.filter-container {
   @apply px-3 py-2 font-medium min-h-10 max-h-10 min-w-max gap-x-2 flex flex-row items-center relative rounded-lg border-2 border-gray-400 my-2
+}
+
+.filter-container.disabled {
+  @apply text-gray-300 
+}
+
+.dataview-header {
+  @apply px-3 py-2 font-medium min-h-10 max-h-10 min-w-max border-b-2 border-gray-300
+}
+
+.dataviewer-header {
+  @apply w-1/3 font-medium text-lg
 }
