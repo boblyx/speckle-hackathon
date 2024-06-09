@@ -83,10 +83,14 @@ namespace familyman.Actions
                 {
                     string id = p.Id.ToString();
                     string name = p.Definition.Name;
-                    string unit_type = "NULL";//p.GetUnitTypeId().ToString();
-                    string guid = "NULL";//p.GUID.ToString();
-                    string value = p.AsValueString();
+                    string unit_type = null;//p.GetUnitTypeId().ToString();
                     bool shared = p.IsShared;
+                    string guid = null;//p.GUID.ToString();
+                    if (shared == true) {
+                        guid = p.GUID.ToString();
+                    }
+                    string value = p.AsValueString();
+                    
                     SimpleParameter simp = new SimpleParameter(id, guid, name,
                         unit_type, value, shared);
                     simp_dict[id] = simp;
@@ -95,7 +99,10 @@ namespace familyman.Actions
                     Debug.WriteLine(e);
                 }
             }
-            string json_str = JsonSerializer.Serialize(simp_dict);
+            Dictionary<string, object> output = new Dictionary<string, object> { };
+            output["uuid"] = uuid;
+            output["parameters"] = parameters;
+            string json_str = JsonSerializer.Serialize(output);
             return json_str;
         }
     }
