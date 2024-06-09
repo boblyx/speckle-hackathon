@@ -3,6 +3,8 @@
 **/venv/*
 venv
 
+**/db/*
+
 **/__pycache__/*
 __pycache__
 # User-specific files
