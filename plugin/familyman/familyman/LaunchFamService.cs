@@ -12,7 +12,7 @@ namespace familyman
         private WebView2 webView;
         private readonly RevitEvent revitEvent;
         public Action CloseAction { get; set; }
-        private string familyman_url = "http://localhost:3000";
+        private string familyman_url = "http://localhost:3042";
 
         internal LaunchFamService(UIApplication a, WebView2 webView)
         {

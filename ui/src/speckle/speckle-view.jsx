@@ -2,11 +2,15 @@ import { createSignal, onMount } from "solid-js";
 import { Viewer, DefaultViewerParams, SpeckleLoader } from "@speckle/viewer";
 import { CameraController, MeasurementsExtension, SelectionExtension, ViewerEvent, FilteringExtension  } from "@speckle/viewer";
 import { SPECKLE_URL, TOKEN, speckleFetch } from "./SpeckleUtils";
-import { modelName, streamId } from "../App";
+import { model, stream } from "../App";
 import { commitQuery, streamQuery } from "./SpeckleQueries";
+import { selectedTypeMark } from "../components/DataViewer";
+import { retrieveDatabase, selFamily, selIfcGUID } from "../components/DatabaseView";
+import { selApplicationId, updateAuditView } from "../components/AuditView";
 
 export const [speckleViewer, setSpeckleViewer] = createSignal(null);
 export const [filter, setFilter] = createSignal(null);
+export const [loadedModels, setLoadedModels] = createSignal([]);
 
 export async function loadSpeckleURL(url, token){
   console.log("Loading model from: ", url)
@@ -18,32 +22,83 @@ export async function loadSpeckleURL(url, token){
   await speckleViewer().loadObject(loader, 1, true);
 }
 
+export async function updateRendering(){
+  if (!selectedTypeMark()) {return};
+  if ('isolatedObjects' in filter().filteringState){
+    const unisolateObjs = filter().filteringState.isolatedObjects;
+    filter().unIsolateObjects(unisolateObjs);
+  }
+
+  const worldTree = speckleViewer().getWorldTree();
+  const renderTree = worldTree.getRenderTree();
+
+  if (selFamily()){
+    var familyTypeNodes = worldTree.findAll((node) => {
+      if (!node.model.raw.speckle_type) return;
+      const rawModelData = node['model']['raw'];
+        if ('definition' in rawModelData){
+          if (rawModelData['definition']['family'] == selFamily()){
+            console.log(rawModelData);
+            return node
+          }
+        }
+    })
+  
+    const filteringState = filter().isolateObjects(
+      familyTypeNodes.map((node) => node.model.id)
+    )
+  }
+
+  if (selApplicationId()){
+    var familyTypeNodes = worldTree.findAll((node) => {
+      if (!node.model.raw.speckle_type) return;
+      const rawModelData = node['model']['raw'];
+      if (rawModelData.applicationId == selApplicationId()){
+        console.log(rawModelData);
+        return node
+      }
+    })
+  
+    const filteringState = filter().isolateObjects(
+      familyTypeNodes.map((node) => node.model.id)
+    )
+  }
+
+}
+
 // Loads model from stream id and commit id if user is logged in. Creates loader if no loader exists, or uses existing loader to load model.
 export async function loadModel(){
 
-  if (!streamId() || !modelName()){
+  if (!stream() || !model()){
     console.error("There is either no stream or model selected.")
     return
   }
+  retrieveDatabase();
 
   var modelFullName, allModels;
-  // url = `${SPECKLE_URL}/projects/${streamId()}`
   let token = localStorage.getItem(TOKEN)
   if (token){
-    switch (modelName()){
-      case "Main":
-        var streamRes = await speckleFetch(streamQuery(streamId()), token);
+    if (loadedModels().length != 0){
+      console.log("Detected loaded models. Unloading them...")
+      await speckleViewer().unloadAll();
+    }
+    switch (model().name){
+      case "main":
+        var streamRes = await speckleFetch(streamQuery(stream().id), token);
         allModels = streamRes.data.stream.branches.items;
         const targetPattern = /^main\/[^/]+$/;
+        var models = []
         for (const item of allModels) {
           if (targetPattern.test(item.name)) {
-            const commitsRes = await speckleFetch(commitQuery(streamId(), item.name), token);
+            const commitsRes = await speckleFetch(commitQuery(stream().id, item.name), token);
             const allCommits = commitsRes.data.stream.branch.commits.items;
             const lastCommitRefObjId = allCommits[allCommits.length - 1]['referencedObject'];
-            const model_url = `${SPECKLE_URL}/streams/${streamId()}/objects/${lastCommitRefObjId}`;
+            const model_url = `${SPECKLE_URL}/streams/${stream().id}/objects/${lastCommitRefObjId}`;
             await loadSpeckleURL(model_url, token);
+            models.push({name:item.name, url:model_url});
           }
         }
+        setLoadedModels(models);
         break;
 
       case null:
@@ -52,10 +107,10 @@ export async function loadModel(){
 
       default:
         // Get model id from chosen name
-        var streamRes = await speckleFetch(streamQuery(streamId()), token);
+        var streamRes = await speckleFetch(streamQuery(stream().id), token);
         allModels = streamRes.data.stream.branches.items;
         for (const item of allModels) {
-          if (item.name === `main/${modelName()}`) {
+          if (item.name === `main/${model().name}`) {
             modelFullName = item.name;
           }
         }
@@ -65,16 +120,18 @@ export async function loadModel(){
           console.error("There is no matching model.")
           return
         }
-
-        const commitsRes = await speckleFetch(commitQuery(streamId(), modelFullName), token);
+        var models = []
+        const commitsRes = await speckleFetch(commitQuery(stream().id, modelFullName), token);
         const allCommits = commitsRes.data.stream.branch.commits.items;
         const lastCommitRefObjId = allCommits[allCommits.length - 1]['referencedObject'];
-        const model_url = `${SPECKLE_URL}/streams/${streamId()}/objects/${lastCommitRefObjId}`;
+        const model_url = `${SPECKLE_URL}/streams/${stream().id}/objects/${lastCommitRefObjId}`;
         await loadSpeckleURL(model_url, token);
+        models.push({name:model().name, url:model_url});
+        setLoadedModels(models);
         break;
     }
-    
-
+    updateAuditView();
+    updateRendering();
   }
 
   else {

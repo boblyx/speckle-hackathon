@@ -3,23 +3,24 @@ import styles from './App.module.css';
 import { createSignal, onMount } from "solid-js";
 import { FS_URL, TOKEN, getUserData, goToSpeckleAuthPage, speckleFetch, speckleLogOut } from './speckle/SpeckleUtils';
 import { useNavigationGuard } from './speckle/NavigationGuard';
-import SpeckleViewer, { filter, loadModel, speckleViewer } from './speckle/speckle-view';
+import SpeckleViewer, { filter, loadModel, speckleViewer, updateRendering } from './speckle/speckle-view';
 import { queryAllStreams, streamQuery } from './speckle/SpeckleQueries';
 import DataViewer, { dataView, selectedTypeMark } from './components/DataViewer';
 import { FilteringExtension } from "@speckle/viewer";
+import { updateAuditView } from './components/AuditView';
 
 export const [userData, setUserData] = createSignal(null);
 export const [winlocation, setWinLocation] = createSignal(window.location.pathname)
-export const [stream, setStream] = createSignal({id:"58ae34f884",name:"main"});
-export const [model, setModel] = createSignal({id:"87584774f1",name:"0220_apartment tier 1"});
+export const [stream, setStream] = createSignal(null);
+export const [model, setModel] = createSignal(null);
 export const [selectedCategory, setSelectedCategory] = createSignal(null);
 
 
 export const BIM_CATEGORIES = [
-  'Door',
-  'Wall',
-  'Opaque Wall',
-  'Column',
+  'Doors',
+  'Walls',
+  'Opaque Walls',
+  'Columns',
 ]
 
 async function selectStream(e){
@@ -209,54 +210,11 @@ async function selectModel(e){
   }
 }
 
-// Open BIM category dropdown list
-async function openBIMCategoryDropdown(){
-  console.log("Listing BIM categories...")
-  const inputDiv = document.getElementById('speckle-bimcategory-input')
-  const dropdownDiv = document.getElementById('speckle-bimcategory-dropdown')
-  dropdownDiv.classList.remove('hidden')
-}
-
-// Update BIM category selection
-async function selectBIMCategory(e){
-  const inputDiv = document.getElementById('speckle-bimcategory-input')
-  const button_ = document.getElementById('speckle-bimcategory-button')
-  const dropdownDiv = document.getElementById('speckle-bimcategory-dropdown')
-
-  const category_ = e.target.getAttribute('data-category')
-
-  inputDiv.value = category_
-  button_.innerHTML = category_
-  setSelectedCategory(category_)
-  dropdownDiv.classList.add('hidden')
-}
-
 async function refreshLog(e){
 
 }
 
-async function updateRendering(){
-  const worldTree = speckleViewer().getWorldTree();
-  const renderTree = worldTree.getRenderTree();
 
-  var familyTypeNodes = worldTree.findAll((node) => {
-    if (!node.model.raw.speckle_type) return;
-    const rawModelData = node['model']['raw'];
-    const category = rawModelData['category'];
-    if (category=='Doors'){
-      if ('definition' in rawModelData){
-        const familyName = rawModelData['definition']['family']
-        if (familyName == "MLD_DOR_Timber_Double"){
-          return node;
-        }
-      }
-    }
-  })
-
-  const filteringState = filter().isolateObjects(
-    familyTypeNodes.map((node) => node.model.id)
-  )
-}
 
 function App() {
   
@@ -264,10 +222,6 @@ function App() {
     await useNavigationGuard(winlocation());
     const data = await getUserData();
     setUserData(data);
-    
-    // DEBUGGING
-    await loadModel();
-    await updateRendering();
   })
 
   return (
@@ -301,6 +255,7 @@ function App() {
             </div>
 
             <button id='navbar-speckle-load-model' className='basic-text' onClick={loadModel}>Load Model</button>
+            <button id='navbar-speckle-refresh-render' className='basic-text' onClick={updateRendering}>Refresh Render</button>
             <button id='navbar-speckle-refresh-log' className='basic-text' onClick={refreshLog}>Refresh Log</button>
             {/* <button id='navbar-speckle-debug' className='basic-text' onClick={refreshLog}>Debug</button> */}
           </div>

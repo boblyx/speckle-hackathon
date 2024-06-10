@@ -2,13 +2,16 @@ import { createSignal, For, onMount, Show } from 'solid-js';
 import { BIM_CATEGORIES } from '../App';
 import filterIcon from '../assets/filter.png';
 import { toggleFilterList } from './DataviewFilters';
+import { dataPropertyFilter } from './DataViewer';
+import { refreshDatabase } from './DatabaseView';
 
 // Function to toggle category filter
 function toggleCategoryFilter(event) {
     const category = event.target.getAttribute('data-category');
-    dataPropertyFilter()[category] = !dataPropertyFilter()[category];
+    dataPropertyFilter()['categories'][category] = !dataPropertyFilter()['categories'][category];
     // CHANGE TO UPDATE THE DIVS ONLY, DONT RETRIEVE AGAIN
     // retrieveDatabase();
+    refreshDatabase();
 }
 
 const CategoryFilter = () => {
