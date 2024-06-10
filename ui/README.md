@@ -1,3 +1,6 @@
+# `ui`
+- Business intelligence UI for BIM managers to view, filter, audit, and edit BIM families, across **multiple linked models** in the same project and approve `Change Requests` sent by users.
+
 ## Usage
 
 Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.

@@ -20,6 +20,7 @@
   "dependencies": {
     "@speckle/viewer": "^2.18.16",
     "solid-js": "^1.8.11",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "vite-template-solid": "link:"
   }
 }
